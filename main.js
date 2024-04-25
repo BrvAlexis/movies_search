@@ -10,7 +10,6 @@ searchInput.addEventListener('input', async function() {
 });
 
 async function searchMovies(searchTerm) {
-    
     const url = `https://www.omdbapi.com/?s=${encodeURIComponent(searchTerm)}&apikey=${API_KEY}`;
 
     try {
@@ -37,7 +36,7 @@ function displayMovies(movies) {
 
     movies.forEach(movie => {
         const filmCard = document.createElement('div');
-        filmCard.classList.add('card', 'mb-3');
+        filmCard.classList.add('card', 'mb-3', 'film-card');
         
 
         filmCard.innerHTML = `
@@ -55,14 +54,15 @@ function displayMovies(movies) {
                 </div>
             </div>
         `;
+            // Ajoutez l'attribut data-imdbid avec l'ID IMDb du film
+            filmCard.setAttribute('data-imdbid', movie.imdbID);
 
-        filmsList.appendChild(filmCard);
+            filmsList.appendChild(filmCard);
     });
 }
 
 
-async function readMore(imdbID) {
-    
+window.readMore = async function(imdbID) {
     const url = `https://www.omdbapi.com/?i=${imdbID}&apikey=${API_KEY}`;
 
     const modal = new bootstrap.Modal(document.getElementById('filmModal'));
@@ -78,44 +78,38 @@ async function readMore(imdbID) {
                 <p>Date de sortie: ${movie.Year}</p>
                 <!-- Autres détails du film -->
             `;
-
-            
         } else {
             console.error('Détails du film non trouvés');
         }
     } catch (error) {
         console.error('Erreur lors de la récupération des détails du film:', error);
     }
-}
+};
 
-
-
-const filmCard = document.querySelector('.film-card');
 
 // Créez l'Intersection Observer
-const observer = new IntersectionObserver(async (entries, obs) => {
-    entries.forEach(async (entry) => {
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
         if (entry.isIntersecting) {
-            console.log('Le composant film-card est visible');
-
             const filmCard = entry.target;
-            const filmData = await fetchFilmData('Nom du film');
-            console.log('Données du film chargées:', filmData);
+            const imdbID = filmCard.getAttribute('data-imdbid'); // Récupérez l'ID IMDb
 
-            filmCard.querySelector('.film-poster').src = filmData.posterUrl;
-            filmCard.querySelector('.film-title').textContent = filmData.title;
-            filmCard.querySelector('.film-release-date').textContent = `Date de sortie: ${filmData.releaseDate}`;
+            fetchFilmData(imdbID).then(filmData => {
+                // Mettez à jour la carte de film avec les données chargées
+                filmCard.querySelector('.film-poster').src = filmData.Poster;
+                filmCard.querySelector('.film-title').textContent = filmData.Title;
+                filmCard.querySelector('.film-release-date').textContent = `Date de sortie: ${filmData.Year}`;
 
-            filmCard.style.opacity = 1;
-            filmCard.style.transform = 'translateX(0)';
+                filmCard.style.opacity = 1;
+                filmCard.style.transform = 'translateX(0)';
+            });
 
-            // Détachez l'observer une fois que l'animation est terminée
-            obs.unobserve(filmCard);
+            observer.unobserve(filmCard); // Détachez l'observer une fois que les données sont chargées
         }
     });
-});
+}, { rootMargin: '0px', threshold: 0.1 }); // Configurez l'observer selon vos besoins
 
 // Sélectionnez tous les éléments .film-card et observez-les
-document.querySelectorAll('.film-card').forEach((filmCard) => {
+document.querySelectorAll('.film-card').forEach(filmCard => {
     observer.observe(filmCard);
 });
