@@ -1,0 +1,5 @@
+.film-card {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 0.5s, transform 0.5s;
+}
