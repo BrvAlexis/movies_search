@@ -35,13 +35,11 @@ function displayMovies(movies) {
         return;
     }
 
-    
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const filmCard = entry.target;
                 const imdbID = filmCard.getAttribute('data-imdbid'); // Récupérez l'ID IMDb
-                console.log('Film card is intersecting:', imdbID); // Ajout du message de débogage
 
                 fetchFilmData(imdbID).then(filmData => {
                     // Mettez à jour la carte de film avec les données chargées
@@ -51,6 +49,8 @@ function displayMovies(movies) {
 
                     filmCard.style.opacity = 1;
                     filmCard.style.transform = 'translateX(0)';
+                }).catch(error => {
+                    console.error('Erreur lors de la récupération des données du film:', error);
                 });
 
                 observer.unobserve(filmCard); // Détachez l'observer une fois que les données sont chargées
@@ -65,14 +65,12 @@ function displayMovies(movies) {
         filmCard.innerHTML = `
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="${movie.Poster}" class="img-fluid rounded-start film-poster" alt="Affiche de ${movie.Title}">
+                    <img src="" class="img-fluid rounded-start film-poster" alt="Affiche de ${movie.Title}">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                    <h5 class="card-title film-title">${movie.Title}</h5>
-
-                    <p class="card-text film-release-date"><small class="text-muted">Date de sortie: ${movie.Year}</small></p>
-
+                        <h5 class="card-title film-title"></h5>
+                        <p class="card-text film-release-date"><small class="text-muted"></small></p>
                         <button class="btn btn-primary" onclick="readMore('${movie.imdbID}')">Read more</button>
                     </div>
                 </div>
