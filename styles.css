@@ -1,5 +1,27 @@
+#films-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
 .film-card {
-    opacity: 0;
-    transform: translateX(-100%);
-    transition: opacity 0.5s, transform 0.5s;
+    max-width: 50%; /* Réduire la largeur maximale de la carte de moitié */
+    margin: auto; /* Centrer la carte */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* Bordure arrondie */
+}
+
+.film-card .film-poster {
+    border-radius: 5px 0 0 5px; /* Bordure arrondie sur l'image */
+}
+
+.film-card .film-title {
+    font-weight: bold; /* Titre en gras */
+}
+
+.film-card .film-release-date {
+    color: #6c757d; /* Couleur du texte */
 }
