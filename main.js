@@ -25,6 +25,7 @@ async function searchMovies(searchTerm) {
     }
 }
 
+
 function displayMovies(movies) {
     const filmsList = document.getElementById('films-list');
     filmsList.innerHTML = ''; // Efface les résultats précédents
@@ -37,7 +38,6 @@ function displayMovies(movies) {
     movies.forEach(movie => {
         const filmCard = document.createElement('div');
         filmCard.classList.add('card', 'mb-3', 'film-card');
-        
 
         filmCard.innerHTML = `
             <div class="row g-0">
@@ -47,19 +47,20 @@ function displayMovies(movies) {
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title">${movie.Title}</h5>
-                        
                         <p class="card-text"><small class="text-muted">Date de sortie: ${movie.Year}</small></p>
                         <button class="btn btn-primary" onclick="readMore('${movie.imdbID}')">Read more</button>
                     </div>
                 </div>
             </div>
         `;
-            // Ajoutez l'attribut data-imdbid avec l'ID IMDb du film
-            filmCard.setAttribute('data-imdbid', movie.imdbID);
 
-            filmsList.appendChild(filmCard);
+        // Ajoutez l'attribut data-imdbid avec l'ID IMDb du film
+        filmCard.setAttribute('data-imdbid', movie.imdbID);
+
+        filmsList.appendChild(filmCard);
     });
 }
+
 
 
 window.readMore = async function(imdbID) {
@@ -73,6 +74,9 @@ window.readMore = async function(imdbID) {
         if (movie.Response === 'True') {
             const modalBody = document.querySelector('.modal-body');
             modalBody.innerHTML = `
+                <div class="col-md-4">
+                    <img src="${movie.Poster}" class="img-fluid rounded-start" alt="Affiche de ${movie.Title}">
+                </div>
                 <h5>${movie.Title}</h5>
                 <p>${movie.Plot}</p>
                 <p>Date de sortie: ${movie.Year}</p>
@@ -93,6 +97,7 @@ const observer = new IntersectionObserver((entries, observer) => {
         if (entry.isIntersecting) {
             const filmCard = entry.target;
             const imdbID = filmCard.getAttribute('data-imdbid'); // Récupérez l'ID IMDb
+            console.log('Film card is intersecting:', imdbID); // Ajout du message de débogage
 
             fetchFilmData(imdbID).then(filmData => {
                 // Mettez à jour la carte de film avec les données chargées
@@ -107,9 +112,11 @@ const observer = new IntersectionObserver((entries, observer) => {
             observer.unobserve(filmCard); // Détachez l'observer une fois que les données sont chargées
         }
     });
-}, { rootMargin: '0px', threshold: 0.1 }); // Configurez l'observer selon vos besoins
+}, { rootMargin: '0px', threshold: 0.1 }); // Configurez l'observer 
 
-// Sélectionnez tous les éléments .film-card et observez-les
-document.querySelectorAll('.film-card').forEach(filmCard => {
+console.log('Nombre d\'éléments .film-card trouvés :', document.querySelectorAll('.film-card').length);
+// Sélectionnez tous les éléments .film-card dans la <div class="row" id="films-list"> 
+document.querySelectorAll('#films-list .film-card').forEach(filmCard => {
     observer.observe(filmCard);
 });
+
