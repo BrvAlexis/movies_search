@@ -62,7 +62,7 @@ function displayMovies(movies) {
 
 
 async function readMore(imdbID) {
-    const apiKey = 'cc3fb616'; // Remplacez par votre clé API OMDb
+    
     const url = `https://www.omdbapi.com/?i=${imdbID}&apikey=${API_KEY}`;
 
     const modal = new bootstrap.Modal(document.getElementById('filmModal'));
